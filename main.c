@@ -7,11 +7,12 @@
 #define ROWS 24
 
 
-//ogni cella ha un nuovo e un vecchio stato
-//uso il vecchio stato per calcolarmi il nuovo stato di ogni cella
-//dopo ogni ciclo di vita del programma
-//e poi me li copio sul vecchio stato alla fine
-//true (1) vuol dire che la cella è viva, false (0) se è morta
+//every cell has a new and old state.
+//i use the old state to determine the new state of each cell
+//after each life cycle of the program and then i copy
+//the new state of every cell to the old one, i print the
+//map  and start again.
+//the true (1) state means that the cell is alive, false (0) means it's dead.
 
 typedef struct
 {
@@ -20,10 +21,9 @@ typedef struct
 	
 } cell;
 
-//stampa il piano 
+//i print the plane
 void printPlane(cell plane[ROWS][COLS])
 {
-	system("clear");
 	printf("\033[0;0H\033[0;0f");
 	for (int i = 0; i < ROWS; i++)
 	{	
@@ -35,9 +35,11 @@ void printPlane(cell plane[ROWS][COLS])
 	}
 }
 
-//conta il numero di celle adiacenti ad una cella [x][y]
+//counts the number of living neighbours adjacent to a generic
+//cell [x][y]
 int countNeighbours(cell plane[ROWS][COLS], int x, int y)
 {
+	//variable to keep track of the neighbours
 	int adjCnt = 0;
 	if (plane[x-1][y].oS && ((x-1) >= 0)) adjCnt++;
 	if (plane[x][y-1].oS && ((y-1) >= 0)) adjCnt++;
@@ -53,14 +55,13 @@ int countNeighbours(cell plane[ROWS][COLS], int x, int y)
 
 void evalCells(cell plane[ROWS][COLS])
 {
-	//per valutare per ogni cella, se sarà viva o morta alla prossima
-	//iterazione
+	//this is to evaluate which cells will live 
+	//and which will die in the nxt iteration
 	for (int x = 0; x < COLS; x++)
 	{
 		for (int y = 0; y < ROWS; y++)
 		{
 			int adjCnt = countNeighbours(plane, x, y);
-			//printf("neighbours: %d\n", countNeighbours(x,y));
 			if (plane[x][y].oS) 
 			{
 				if ( adjCnt == 2 || adjCnt == 3) 
@@ -74,7 +75,8 @@ void evalCells(cell plane[ROWS][COLS])
 			}			
 		}
 	}
-	//e poi aggiorno il vecchio stato col nuovo
+	//and after i calculated each new state, 
+	//i can upload it to the old one and start up again.
 	for (int x = 0; x < COLS; x++)
 	{
 		for (int y = 0; y < ROWS; y++)
@@ -88,15 +90,14 @@ void evalCells(cell plane[ROWS][COLS])
 
 int main()
 {
-	//mappa del piano delle cellule
+	//cell map
 	cell cellmap[ROWS][COLS];
-	//mappa del file di input
-	//questo file è una griglia di 1 e 0 
-	//a cui ad ogni 1 associo una cella con valore iniziale true 
-	//e ad ogni 0 una con valore iniziale false
+	//file input map.
+	//this is a grid of 1s and 0s in which at every 1 i associate 
+	//a live cell (starting value of "true") and to each 0 a dead cell.
 	char charmap[ROWS][COLS];
 
-	//azzero charmap
+	//this is to put charmap to 0. i'm pretty sure it's pointless.
 	for (int i = 0; i < ROWS; i++)
 		for (int e = 0; e < COLS; e++)
 			charmap[i][e] = 0;
@@ -114,10 +115,11 @@ int main()
 		}
 	}
 	
-	while(true) //ciclo principale del programma
+	while(true) //main program cycle
 	{
 		printPlane(cellmap);
 		evalCells(cellmap);
-		usleep(1000000);
+		usleep(1000000); //this is to better enjoy the 
+		//transition between different states of the whole plane.
 	}
 }
